@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+venv/
+env/
+.venv/
+.env/
+
+# Uploaded resumes — never commit these
+uploads/*.pdf
+uploads/*.PDF
+
+# Environment variables
+.env
+.env.local
+secrets.py
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# macOS
+.DS_Store
+.AppleDouble
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
+flask_session/
+
+# Node (if added later)
+node_modules/
+npm-debug.log*
