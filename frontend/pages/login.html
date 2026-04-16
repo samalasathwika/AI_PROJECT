@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Login — ResumeIQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--fd:'Syne',sans-serif;--fb:'DM Sans',sans-serif;--r:14px;--rs:8px;--ac:#7c6af7;--ac2:#a89cf7;--acd:rgba(124,106,247,.12);}
+[data-theme="dark"]{--bg:#07070d;--bg2:#0e0e18;--bg3:#15151f;--card:#1a1a26;--b:#222235;--b2:#2c2c42;--tx:#eaeaf5;--tx2:#8484a8;--tx3:#42425a;--gr:#3ecf8e;--re:#f87171;--red:rgba(248,113,113,.1);--shadow:rgba(0,0,0,.4);}
+[data-theme="light"]{--bg:#f5f5fc;--bg2:#ffffff;--bg3:#eeeef8;--card:#ffffff;--b:#ddddf0;--b2:#c8c8e8;--tx:#1a1a2e;--tx2:#555580;--tx3:#9090b8;--gr:#1a9e62;--re:#d94040;--red:rgba(217,64,64,.08);--shadow:rgba(0,0,0,.08);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--fb);background:var(--bg);color:var(--tx);min-height:100vh;display:flex;flex-direction:column;}
+[data-theme="dark"] body::before{content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(124,106,247,.07),transparent 66%);pointer-events:none;z-index:0;}
+
+/* NAV */
+nav{display:flex;align-items:center;gap:14px;padding:0 28px;height:60px;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(20px);border-bottom:1px solid var(--b);position:sticky;top:0;z-index:100;}
+.nlogo{font-family:var(--fd);font-size:20px;font-weight:800;letter-spacing:-1px;color:var(--tx);text-decoration:none;}
+.nlogo span{color:var(--ac2);}
+.nlinks{margin-left:auto;display:flex;gap:8px;}
+.nlink{padding:7px 15px;border-radius:var(--rs);font-size:13px;font-weight:500;color:var(--tx2);cursor:pointer;border:none;background:none;font-family:var(--fb);text-decoration:none;transition:all .2s;}
+.nlink:hover{color:var(--tx);background:var(--bg3);}
+.nlink.pri{background:var(--ac);color:#fff;}
+.nlink.pri:hover{opacity:.9;}
+
+/* MAIN */
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;position:relative;z-index:1;}
+.card{background:var(--card);border:1px solid var(--b);border-radius:20px;padding:38px 36px;width:100%;max-width:420px;box-shadow:0 8px 40px var(--shadow);}
+.card-title{font-family:var(--fd);font-size:24px;font-weight:800;letter-spacing:-1px;margin-bottom:4px;}
+.card-sub{font-size:13px;color:var(--tx2);margin-bottom:28px;line-height:1.6;}
+
+/* FORM */
+.field{margin-bottom:18px;}
+label{display:block;font-size:12px;font-weight:600;color:var(--tx2);letter-spacing:.5px;margin-bottom:6px;}
+input{width:100%;background:var(--bg3);border:1px solid var(--b2);border-radius:var(--rs);padding:11px 14px;color:var(--tx);font-size:14px;font-family:var(--fb);outline:none;transition:all .2s;}
+input:focus{border-color:var(--ac);background:var(--bg2);}
+input::placeholder{color:var(--tx3);}
+input.err-inp{border-color:var(--re);}
+.err-msg{font-size:12px;color:var(--re);margin-top:5px;display:none;}
+.err-msg.on{display:block;}
+
+/* PASSWORD FIELD */
+.pw-wrap{position:relative;}
+.pw-wrap input{padding-right:40px;}
+.pw-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--tx3);cursor:pointer;font-size:16px;padding:2px;}
+.pw-eye:hover{color:var(--tx);}
+
+/* BTN */
+.btn-main{width:100%;background:var(--ac);color:#fff;border:none;padding:13px;border-radius:var(--rs);font-size:15px;font-weight:700;cursor:pointer;font-family:var(--fd);transition:all .28s;box-shadow:0 0 30px rgba(124,106,247,.25);margin-top:4px;}
+.btn-main:hover{transform:translateY(-1px);box-shadow:0 0 50px rgba(124,106,247,.4);}
+.btn-main:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;}
+
+/* DIVIDER */
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--tx3);font-size:12px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--b);}
+
+/* LINKS */
+.link-row{text-align:center;font-size:13px;color:var(--tx2);}
+.link-row a{color:var(--ac2);text-decoration:none;font-weight:600;}
+.link-row a:hover{color:var(--ac);}
+.forgot-link{display:block;text-align:right;font-size:12px;color:var(--tx3);text-decoration:none;margin-top:5px;}
+.forgot-link:hover{color:var(--ac2);}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border:1px solid var(--b2);border-radius:var(--rs);padding:10px 18px;font-size:13px;transition:all .35s cubic-bezier(.34,1.56,.64,1);z-index:999;white-space:nowrap;box-shadow:0 8px 32px var(--shadow);}
+.toast.on{transform:translateX(-50%) translateY(0);}
+.toast.err{border-color:rgba(248,113,113,.4);color:var(--re);}
+
+/* ERROR BANNER */
+.banner{background:var(--red);border:1px solid rgba(248,113,113,.3);border-radius:var(--rs);padding:10px 14px;font-size:13px;color:var(--re);margin-bottom:16px;display:none;animation:fadeUp .25s ease;}
+.banner.on{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="home.html" class="nlogo">Resume<span>IQ</span></a>
+  <div class="nlinks">
+    <a href="home.html" class="nlink">Home</a>
+    <a href="signup.html" class="nlink pri">Create Account</a>
+  </div>
+</nav>
+
+<main>
+  <div class="card">
+    <div class="card-title">Welcome back 👋</div>
+    <div class="card-sub">Login to access your resume analysis and builder.</div>
+
+    <div class="banner" id="errBanner"></div>
+
+    <div class="field">
+      <label>Email or Phone Number</label>
+      <input type="text" id="identifier" placeholder="you@email.com or 9876543210" autocomplete="username"/>
+      <div class="err-msg" id="err-identifier"></div>
+    </div>
+
+    <div class="field">
+      <label>Password</label>
+      <div class="pw-wrap">
+        <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password"/>
+        <button class="pw-eye" onclick="togglePw('password',this)" type="button">👁</button>
+      </div>
+      <a href="forgot-password.html" class="forgot-link">Forgot password?</a>
+      <div class="err-msg" id="err-password"></div>
+    </div>
+
+    <button class="btn-main" id="loginBtn" onclick="doLogin()">Login →</button>
+
+    <div class="divider">or</div>
+    <div class="link-row">Don't have an account? <a href="signup.html">Create one free</a></div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="../js/auth.js"></script>
+<script>
+// Restore theme
+(function(){const t=localStorage.getItem('riq-theme');if(t)document.documentElement.dataset.theme=t;})();
+
+// If already logged in, show message then redirect to analyze
+if(Auth.isLoggedIn()){
+  document.querySelector('.card-sub').textContent='You are already logged in. Redirecting to your dashboard…';
+  setTimeout(()=>window.location.href='analyze.html', 1000);
+}
+
+// Allow Enter key to submit
+document.getElementById('password').addEventListener('keydown', e => {
+  if(e.key === 'Enter') doLogin();
+});
+document.getElementById('identifier').addEventListener('keydown', e => {
+  if(e.key === 'Enter') doLogin();
+});
+
+function togglePw(id, btn) {
+  const inp = document.getElementById(id);
+  if(inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+  else { inp.type = 'password'; btn.textContent = '👁'; }
+}
+
+function showErr(id, msg) {
+  const el = document.getElementById('err-'+id);
+  if(!el) return;
+  el.textContent = msg; el.classList.add('on');
+  document.getElementById(id).classList.add('err-inp');
+}
+function clearErrs() {
+  ['identifier','password'].forEach(id => {
+    const el = document.getElementById('err-'+id);
+    if(el) { el.textContent=''; el.classList.remove('on'); }
+    const inp = document.getElementById(id);
+    if(inp) inp.classList.remove('err-inp');
+  });
+  document.getElementById('errBanner').classList.remove('on');
+}
+function showBanner(msg) {
+  const b = document.getElementById('errBanner');
+  b.textContent = msg; b.classList.add('on');
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.remove('err'); t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 3000);
+}
+
+async function doLogin() {
+  clearErrs();
+  const identifier = document.getElementById('identifier').value.trim();
+  const password   = document.getElementById('password').value;
+  let valid = true;
+
+  if(!identifier) { showErr('identifier','Please enter your email or phone number.'); valid=false; }
+  if(!password)   { showErr('password','Please enter your password.'); valid=false; }
+  if(!valid) return;
+
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.textContent = 'Logging in…';
+
+  try {
+    const res = await Auth.login(identifier, password);
+    if(res.success) {
+      showToast('Welcome back! Redirecting…');
+      setTimeout(() => window.location.href = 'analyze.html', 800);
+    } else {
+      showBanner(res.message || 'Login failed. Please check your credentials.');
+      btn.disabled = false; btn.textContent = 'Login →';
+    }
+  } catch(e) {
+    showBanner('Could not connect to server. Make sure the backend is running.');
+    btn.disabled = false; btn.textContent = 'Login →';
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ResumeIQ — AI Resume Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════ THEME ═══════════ */
+:root{
+  --fd:'Syne',sans-serif;--fb:'DM Sans',sans-serif;--fm:'DM Mono',monospace;
+  --r:14px;--rs:8px;--rl:20px;
+  --ac:#7c6af7;--ac2:#a89cf7;--ac3:#c4bafb;
+  --acd:rgba(124,106,247,.12);--acg:rgba(124,106,247,.22);
+}
+[data-theme="dark"]{
+  --bg:#07070d;--bg2:#0e0e18;--bg3:#15151f;
+  --card:#1a1a26;--card2:#1f1f2e;
+  --b:#222235;--b2:#2c2c42;--b3:#383855;
+  --tx:#eaeaf5;--tx2:#8484a8;--tx3:#42425a;
+  --gr:#3ecf8e;--grd:rgba(62,207,142,.1);
+  --am:#f59e0b;--cy:#22d3ee;
+  --shadow:rgba(0,0,0,.5);
+}
+[data-theme="light"]{
+  --bg:#f5f5fc;--bg2:#ffffff;--bg3:#eeeef8;
+  --card:#ffffff;--card2:#f8f8ff;
+  --b:#ddddf0;--b2:#c8c8e8;--b3:#b0b0d8;
+  --tx:#1a1a2e;--tx2:#555580;--tx3:#9090b8;
+  --gr:#1a9e62;--grd:rgba(26,158,98,.08);
+  --am:#b37800;--cy:#0891b2;
+  --shadow:rgba(0,0,0,.08);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--fb);background:var(--bg);color:var(--tx);overflow-x:hidden;}
+
+/* Ambient glow */
+[data-theme="dark"] .glow-bg{
+  position:fixed;top:-30vh;left:50%;transform:translateX(-50%);
+  width:120vw;height:80vh;
+  background:radial-gradient(ellipse at 50% 0%,rgba(124,106,247,.09) 0%,rgba(34,211,238,.04) 45%,transparent 70%);
+  pointer-events:none;z-index:0;
+}
+
+/* ═══ NAV ═══ */
+nav{
+  position:sticky;top:0;z-index:200;
+  display:flex;align-items:center;gap:16px;
+  padding:0 40px;height:62px;
+  background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--b);
+}
+.nlogo{font-family:var(--fd);font-size:21px;font-weight:800;letter-spacing:-1px;color:var(--tx);text-decoration:none;}
+.nlogo span{color:var(--ac2);}
+.nlinks{display:flex;gap:4px;margin-left:auto;align-items:center;}
+.nlink{padding:7px 16px;border-radius:var(--rs);font-size:13px;font-weight:500;
+  color:var(--tx2);text-decoration:none;transition:all .2s;}
+.nlink:hover{color:var(--tx);background:var(--bg3);}
+.nlink.cta{background:var(--ac);color:#fff;font-weight:700;box-shadow:0 0 20px rgba(124,106,247,.3);}
+.nlink.cta:hover{opacity:.9;transform:translateY(-1px);}
+.theme-btn{width:36px;height:36px;border-radius:var(--rs);background:var(--bg3);border:1px solid var(--b2);
+  color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;}
+.theme-btn:hover{border-color:var(--ac);color:var(--ac2);}
+
+/* ═══ HERO ═══ */
+.hero{
+  position:relative;z-index:1;
+  min-height:92vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;
+  padding:80px 24px 60px;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--acd);border:1px solid rgba(124,106,247,.3);
+  padding:6px 18px;border-radius:100px;
+  font-size:12px;color:var(--ac2);margin-bottom:28px;
+  animation:fadeUp .5s ease both;
+}
+.ldot{width:7px;height:7px;border-radius:50%;background:var(--gr);
+  box-shadow:0 0 8px var(--gr);animation:pulse 2s ease infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+.hero h1{
+  font-family:var(--fd);
+  font-size:clamp(42px,7vw,80px);
+  font-weight:800;line-height:1.0;letter-spacing:-3px;
+  margin-bottom:22px;
+  animation:fadeUp .5s .1s ease both;
+}
+.hero h1 .line2{display:block;margin-top:4px;}
+.grad{
+  background:linear-gradient(130deg,var(--ac2) 0%,var(--cy) 60%,var(--ac3) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero p{
+  font-size:17px;color:var(--tx2);max-width:520px;
+  line-height:1.75;font-weight:300;margin:0 auto 36px;
+  animation:fadeUp .5s .2s ease both;
+}
+
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
+  animation:fadeUp .5s .3s ease both;margin-bottom:52px;}
+.btn-hero{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:14px 34px;border-radius:var(--r);font-size:15px;font-weight:700;
+  text-decoration:none;cursor:pointer;border:none;font-family:var(--fd);
+  transition:all .28s;
+}
+.btn-hero.pri{
+  background:var(--ac);color:#fff;
+  box-shadow:0 0 40px rgba(124,106,247,.35);
+}
+.btn-hero.pri:hover{transform:translateY(-2px);box-shadow:0 0 60px rgba(124,106,247,.5);}
+.btn-hero.sec{
+  background:var(--bg3);color:var(--tx);
+  border:1px solid var(--b2);
+}
+.btn-hero.sec:hover{border-color:var(--b3);background:var(--card);}
+
+/* Stats row */
+.hero-stats{
+  display:flex;gap:40px;justify-content:center;
+  animation:fadeUp .5s .4s ease both;
+}
+.hs{text-align:center;}
+.hs-n{font-family:var(--fd);font-size:30px;font-weight:800;letter-spacing:-1.5px;color:var(--tx);}
+.hs-l{font-size:11px;color:var(--tx3);margin-top:2px;letter-spacing:.5px;text-transform:uppercase;}
+
+/* Floating resume card */
+.hero-visual{
+  position:relative;z-index:1;
+  display:flex;justify-content:center;padding:0 24px 80px;
+  animation:fadeUp .6s .5s ease both;
+}
+.resume-mockup{
+  background:var(--card);border:1px solid var(--b2);
+  border-radius:20px;padding:28px 28px 22px;
+  max-width:540px;width:100%;
+  box-shadow:0 32px 80px var(--shadow);
+  position:relative;overflow:hidden;
+}
+.resume-mockup::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--ac),var(--cy));
+}
+.rmock-top{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.rmock-av{
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--ac),var(--cy));
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--fd);font-size:16px;font-weight:800;color:#fff;
+}
+.rmock-name{font-family:var(--fd);font-size:16px;font-weight:800;color:var(--tx);}
+.rmock-role{font-size:11px;color:var(--ac2);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-top:2px;}
+.rmock-score{margin-left:auto;text-align:right;}
+.rmock-score-n{font-family:var(--fd);font-size:28px;font-weight:800;color:var(--gr);letter-spacing:-1px;}
+.rmock-score-l{font-size:10px;color:var(--tx3);}
+.rmock-bars{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.rmock-bar-row{display:flex;align-items:center;gap:8px;}
+.rmock-bar-lbl{font-size:11px;color:var(--tx2);width:80px;flex-shrink:0;}
+.rmock-bar-track{flex:1;height:5px;background:var(--b);border-radius:100px;overflow:hidden;}
+.rmock-bar-fill{height:100%;border-radius:100px;transition:width 1.8s cubic-bezier(.4,0,.2,1);}
+.rmock-bar-val{font-family:var(--fm);font-size:10px;color:var(--tx3);width:32px;text-align:right;flex-shrink:0;}
+.rmock-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.rmock-tag{
+  font-size:11px;font-family:var(--fm);padding:3px 10px;border-radius:100px;
+  border:1px solid rgba(124,106,247,.3);background:var(--acd);color:var(--ac2);
+}
+.rmock-tag.miss{border-color:rgba(248,113,113,.25);background:rgba(248,113,113,.08);color:#f87171;}
+.rmock-footer{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid var(--b);}
+.rmock-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--grd);border:1px solid rgba(62,207,142,.25);
+  color:var(--gr);font-size:10px;padding:3px 10px;border-radius:100px;
+}
+.rmock-dl{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--ac);color:#fff;font-size:11px;font-weight:700;
+  padding:6px 14px;border-radius:var(--rs);font-family:var(--fd);
+  cursor:pointer;text-decoration:none;transition:all .2s;
+}
+.rmock-dl:hover{opacity:.88;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ SECTION SHARED ═══ */
+section{position:relative;z-index:1;padding:80px 24px;}
+.section-inner{max-width:1080px;margin:0 auto;}
+.sec-label{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--ac2);margin-bottom:14px;
+}
+.sec-label::before{content:'';width:24px;height:1.5px;background:var(--ac);display:inline-block;}
+.sec-h2{font-family:var(--fd);font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-1.5px;margin-bottom:14px;line-height:1.1;}
+.sec-sub{font-size:15px;color:var(--tx2);line-height:1.75;max-width:520px;}
+
+/* ═══ FEATURES ═══ */
+.features{background:var(--bg2);border-top:1px solid var(--b);border-bottom:1px solid var(--b);}
+.feat-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--b);
+  border:1px solid var(--b);border-radius:16px;overflow:hidden;margin-top:48px;
+}
+.feat-card{
+  background:var(--bg2);padding:28px 24px;
+  transition:background .25s;position:relative;overflow:hidden;
+}
+.feat-card:hover{background:var(--card);}
+.feat-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--ac),var(--cy));
+  transform:scaleX(0);transform-origin:left;transition:transform .3s;
+}
+.feat-card:hover::after{transform:scaleX(1);}
+.feat-ico{
+  width:44px;height:44px;border-radius:12px;
+  background:var(--acd);border:1px solid rgba(124,106,247,.25);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;margin-bottom:16px;
+}
+.feat-title{font-family:var(--fd);font-size:15px;font-weight:700;margin-bottom:7px;color:var(--tx);}
+.feat-desc{font-size:13px;color:var(--tx2);line-height:1.7;}
+.feat-tag{
+  display:inline-block;margin-top:12px;
+  font-size:10px;font-weight:700;letter-spacing:.5px;
+  padding:3px 10px;border-radius:100px;
+  background:var(--acd);color:var(--ac2);border:1px solid rgba(124,106,247,.25);
+}
+
+/* ═══ HOW IT WORKS ═══ */
+.steps{margin-top:52px;display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;}
+.steps::before{
+  content:'';position:absolute;top:28px;left:calc(12.5%);
+  width:75%;height:1px;background:linear-gradient(90deg,var(--ac),var(--cy),var(--ac));
+  opacity:.3;
+}
+.step-card{text-align:center;padding:0 16px;position:relative;}
+.step-num{
+  width:56px;height:56px;border-radius:50%;
+  background:var(--card);border:1.5px solid var(--b2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--fd);font-size:18px;font-weight:800;color:var(--ac2);
+  margin:0 auto 18px;position:relative;z-index:1;
+  transition:all .3s;
+}
+.step-card:hover .step-num{
+  background:var(--ac);border-color:var(--ac);color:#fff;
+  box-shadow:0 0 30px rgba(124,106,247,.4);
+}
+.step-title{font-family:var(--fd);font-size:14px;font-weight:700;margin-bottom:7px;color:var(--tx);}
+.step-desc{font-size:12px;color:var(--tx2);line-height:1.65;}
+
+/* ═══ ABOUT ═══ */
+.about-wrap{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:60px;align-items:center;margin-top:52px;
+}
+.about-bullets{display:flex;flex-direction:column;gap:14px;margin-top:28px;}
+.ab{display:flex;align-items:flex-start;gap:12px;}
+.ab-ico{
+  width:32px;height:32px;border-radius:var(--rs);flex-shrink:0;
+  background:var(--acd);border:1px solid rgba(124,106,247,.25);
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+  margin-top:2px;
+}
+.ab-text{font-size:13.5px;color:var(--tx2);line-height:1.65;}
+.ab-text strong{color:var(--tx);display:block;margin-bottom:2px;}
+.tech-stack{
+  background:var(--card);border:1px solid var(--b);border-radius:16px;
+  padding:28px;display:flex;flex-direction:column;gap:16px;
+}
+.ts-label{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px;}
+.ts-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.ts-tag{
+  padding:5px 13px;border-radius:100px;font-size:12px;font-family:var(--fm);
+  border:1px solid var(--b2);color:var(--tx2);background:var(--bg3);
+  transition:all .2s;
+}
+.ts-tag:hover{border-color:var(--ac);color:var(--ac2);background:var(--acd);}
+.ts-tag.hi{border-color:rgba(124,106,247,.4);color:var(--ac2);background:var(--acd);}
+
+/* ═══ CTA ═══ */
+.cta-section{
+  background:var(--card);border-top:1px solid var(--b);border-bottom:1px solid var(--b);
+  text-align:center;
+}
+.cta-inner{max-width:600px;margin:0 auto;}
+.cta-inner .sec-h2{margin:0 auto 14px;}
+.cta-inner .sec-sub{margin:0 auto 36px;}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+
+/* ═══ FOOTER ═══ */
+footer{
+  border-top:1px solid var(--b);padding:40px 40px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;
+  position:relative;z-index:1;
+}
+.footer-logo{font-family:var(--fd);font-size:17px;font-weight:800;letter-spacing:-1px;color:var(--tx2);}
+.footer-logo span{color:var(--ac);}
+.footer-links{display:flex;gap:20px;flex-wrap:wrap;}
+.footer-links a{font-size:13px;color:var(--tx3);text-decoration:none;transition:color .2s;}
+.footer-links a:hover{color:var(--tx2);}
+.footer-copy{font-size:12px;color:var(--tx3);}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:800px){
+  nav{padding:0 20px;}
+  .feat-grid{grid-template-columns:1fr;}
+  .steps{grid-template-columns:1fr 1fr;gap:28px;}
+  .steps::before{display:none;}
+  .about-wrap{grid-template-columns:1fr;}
+  footer{flex-direction:column;align-items:flex-start;padding:28px 20px;}
+}
+@media(max-width:500px){
+  .hero h1{letter-spacing:-2px;}
+  .hero-stats{gap:24px;}
+  .hero-btns{flex-direction:column;align-items:center;}
+  .steps{grid-template-columns:1fr;}
+  .nlink:not(.cta){display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="glow-bg"></div>
+
+<!-- ═══ NAV ═══ -->
+<nav>
+  <a href="home.html" class="nlogo">Resume<span>IQ</span></a>
+  <div class="nlinks">
+    <a href="analyze.html" class="nlink">Analyze</a>
+    <a href="analyze.html#builder" class="nlink">Builder</a>
+    <a href="#about" class="nlink">About</a>
+    <a href="#contact" class="nlink">Contact</a>
+    <a href="login.html" class="nlink" id="navLoginLink">Login</a>
+    <button class="nlink" id="navLogoutBtn" onclick="doLogout()" style="display:none;color:var(--re);border:1px solid rgba(248,113,113,.3);background:rgba(248,113,113,.08);">🚪 Logout</button>
+    <a href="analyze.html" class="nlink cta" id="navCtaBtn">Try Free →</a>
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+    <button class="theme-btn" onclick="window.location.href='analyze.html'" title="Settings & Profile" style="font-size:15px;">⚙️</button>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="hero-badge">
+    <span class="ldot"></span>
+    Full-Stack AI · Python + Flask · Placement Ready
+  </div>
+  <h1>
+    Your resume,
+    <span class="line2"><span class="grad">recruiter-ready.</span></span>
+  </h1>
+  <p>Upload your PDF. Get a real AI score, skill gap analysis, ATS keywords, job description matching, and a downloadable resume — in seconds.</p>
+  <div class="hero-btns">
+    <a href="analyze.html" class="btn-hero pri">⚡ Analyze My Resume</a>
+    <a href="signup.html" class="btn-hero sec">Create Free Account →</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hs"><div class="hs-n">100</div><div class="hs-l">Max Score</div></div>
+    <div class="hs"><div class="hs-n">6</div><div class="hs-l">Job Roles</div></div>
+    <div class="hs"><div class="hs-n">8</div><div class="hs-l">Templates</div></div>
+    <div class="hs"><div class="hs-n">5</div><div class="hs-l">AI Modules</div></div>
+  </div>
+</div>
+
+<!-- Floating resume mockup -->
+<div class="hero-visual">
+  <div class="resume-mockup">
+    <div class="rmock-top">
+      <div class="rmock-av">VP</div>
+      <div>
+        <div class="rmock-name">Vaishnavi Pogaku</div>
+        <div class="rmock-role">Python Developer</div>
+      </div>
+      <div class="rmock-score">
+        <div class="rmock-score-n" id="animScore">0</div>
+        <div class="rmock-score-l">/ 100 Score</div>
+      </div>
+    </div>
+    <div class="rmock-bars">
+      <div class="rmock-bar-row">
+        <div class="rmock-bar-lbl">Sections</div>
+        <div class="rmock-bar-track"><div class="rmock-bar-fill" id="b0" style="width:0%;background:var(--gr)"></div></div>
+        <div class="rmock-bar-val">20/20</div>
+      </div>
+      <div class="rmock-bar-row">
+        <div class="rmock-bar-lbl">Skills</div>
+        <div class="rmock-bar-track"><div class="rmock-bar-fill" id="b1" style="width:0%;background:var(--ac)"></div></div>
+        <div class="rmock-bar-val">20/25</div>
+      </div>
+      <div class="rmock-bar-row">
+        <div class="rmock-bar-lbl">Projects</div>
+        <div class="rmock-bar-track"><div class="rmock-bar-fill" id="b2" style="width:0%;background:var(--am)"></div></div>
+        <div class="rmock-bar-val">18/20</div>
+      </div>
+      <div class="rmock-bar-row">
+        <div class="rmock-bar-lbl">Experience</div>
+        <div class="rmock-bar-track"><div class="rmock-bar-fill" id="b3" style="width:0%;background:var(--cy)"></div></div>
+        <div class="rmock-bar-val">12/20</div>
+      </div>
+      <div class="rmock-bar-row">
+        <div class="rmock-bar-lbl">ATS Keywords</div>
+        <div class="rmock-bar-track"><div class="rmock-bar-fill" id="b4" style="width:0%;background:var(--ac2)"></div></div>
+        <div class="rmock-bar-val">12/15</div>
+      </div>
+    </div>
+    <div class="rmock-tags">
+      <span class="rmock-tag">Python ✓</span>
+      <span class="rmock-tag">Flask ✓</span>
+      <span class="rmock-tag">SQL ✓</span>
+      <span class="rmock-tag">Git ✓</span>
+      <span class="rmock-tag miss">Docker ✗</span>
+      <span class="rmock-tag miss">AWS ✗</span>
+    </div>
+    <div class="rmock-footer">
+      <div class="rmock-badge">✓ ATS Compatible</div>
+      <a href="analyze.html" class="rmock-dl">📄 Download PDF</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FEATURES ═══ -->
+<section class="features" id="features">
+  <div class="section-inner">
+    <div class="sec-label">Features</div>
+    <h2 class="sec-h2">Everything you need to<br/>land your first job.</h2>
+    <p class="sec-sub">Built for CS students, freshers, and placement-season warriors. No fluff — just the tools that actually matter.</p>
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-ico">📊</div>
+        <div class="feat-title">AI Resume Score</div>
+        <div class="feat-desc">Get a score out of 100 based on sections, skills, projects, experience, and ATS keyword coverage. Know exactly where you stand.</div>
+        <span class="feat-tag">pdfplumber + NLP</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ico">🔍</div>
+        <div class="feat-title">Skill Gap Analysis</div>
+        <div class="feat-desc">Pick a target role — Python Dev, ML Engineer, DevOps, Web Dev and more. See exactly which skills you have, which are missing, and bonus skills.</div>
+        <span class="feat-tag">6 Job Roles</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ico">🎯</div>
+        <div class="feat-title">JD Matcher</div>
+        <div class="feat-desc">Paste any job description. Get an ATS match percentage, detected vs missing keywords, and tailored suggestions to improve your chances.</div>
+        <span class="feat-tag">Keyword Extraction</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ico">✏️</div>
+        <div class="feat-title">Resume Builder</div>
+        <div class="feat-desc">Fill in your details and watch a live preview update in real time. Real-time field validation guides you to write recruiter-friendly content.</div>
+        <span class="feat-tag">Live Preview</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ico">🎨</div>
+        <div class="feat-title">8 Pro Templates</div>
+        <div class="feat-desc">Minimal Purple, Dark Mode Pro, Neon Cyber, Rose Elegant, Classic Serif, Executive Black, Bold Gradient, Two Column. Apply in one click.</div>
+        <span class="feat-tag">ATS-Safe Designs</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ico">📄</div>
+        <div class="feat-title">PDF Export</div>
+        <div class="feat-desc">Download your completed resume as a pixel-perfect PDF using html2pdf.js. Keeps all template formatting, fonts, and colours intact.</div>
+        <span class="feat-tag">html2pdf.js</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<section id="how">
+  <div class="section-inner">
+    <div class="sec-label">How It Works</div>
+    <h2 class="sec-h2">From upload to<br/>offer-ready in 4 steps.</h2>
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-title">Upload Your PDF</div>
+        <div class="step-desc">Drag and drop your resume. The backend extracts text using pdfplumber and validates it's a real resume.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-title">Pick Your Role</div>
+        <div class="step-desc">Choose from 6 tech roles. The AI detects your skills and compares against what employers in that role expect.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-title">Get Your Score</div>
+        <div class="step-desc">Receive a score out of 100, breakdown by category, skill tags, and actionable improvement suggestions.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-title">Build & Download</div>
+        <div class="step-desc">Use the Resume Builder to polish your resume, apply a template, and export a professional PDF in one click.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ABOUT ═══ -->
+<section class="features" id="about">
+  <div class="section-inner">
+    <div class="about-wrap">
+      <div>
+        <div class="sec-label">About ResumeIQ</div>
+        <h2 class="sec-h2">Built by a student,<br/>for students.</h2>
+        <p class="sec-sub">ResumeIQ is a portfolio project by a CS student from Warangal, Telangana — built during placement prep to solve a real problem: knowing exactly what's wrong with your resume before a recruiter does.</p>
+        <div class="about-bullets">
+          <div class="ab">
+            <div class="ab-ico">🧠</div>
+            <div class="ab-text"><strong>Real full-stack architecture</strong>HTML/CSS/JS frontend + Python Flask backend. Not a template — every line is custom.</div>
+          </div>
+          <div class="ab">
+            <div class="ab-ico">🔒</div>
+            <div class="ab-text"><strong>Auth + user management</strong>Session-based authentication, password hashing, profile storage — production patterns.</div>
+          </div>
+          <div class="ab">
+            <div class="ab-ico">⚡</div>
+            <div class="ab-text"><strong>Demo mode always works</strong>No backend? No problem. The app falls back to smart simulated analysis automatically.</div>
+          </div>
+        </div>
+      </div>
+      <div class="tech-stack">
+        <div>
+          <div class="ts-label">Frontend</div>
+          <div class="ts-tags">
+            <span class="ts-tag hi">HTML5</span>
+            <span class="ts-tag hi">CSS3</span>
+            <span class="ts-tag hi">JavaScript ES6+</span>
+            <span class="ts-tag">html2pdf.js</span>
+            <span class="ts-tag">Fetch API</span>
+          </div>
+        </div>
+        <div>
+          <div class="ts-label">Backend</div>
+          <div class="ts-tags">
+            <span class="ts-tag hi">Python 3</span>
+            <span class="ts-tag hi">Flask</span>
+            <span class="ts-tag hi">pdfplumber</span>
+            <span class="ts-tag">PyPDF2</span>
+            <span class="ts-tag">Flask-CORS</span>
+          </div>
+        </div>
+        <div>
+          <div class="ts-label">Concepts Used</div>
+          <div class="ts-tags">
+            <span class="ts-tag">REST APIs</span>
+            <span class="ts-tag">Session Auth</span>
+            <span class="ts-tag">PDF Parsing</span>
+            <span class="ts-tag">NLP (keyword)</span>
+            <span class="ts-tag">Scoring Algo</span>
+          </div>
+        </div>
+        <div>
+          <div class="ts-label">Dev Tools</div>
+          <div class="ts-tags">
+            <span class="ts-tag hi">Git + GitHub</span>
+            <span class="ts-tag">VS Code</span>
+            <span class="ts-tag">Live Server</span>
+            <span class="ts-tag">Postman</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="cta-section" id="contact">
+  <div class="section-inner cta-inner">
+    <div class="sec-label" style="justify-content:center;">Get Started</div>
+    <h2 class="sec-h2">Ready to improve<br/>your resume?</h2>
+    <p class="sec-sub">It's free. No signup required to try it in demo mode. Create an account for real AI-powered analysis with your actual resume.</p>
+    <div class="cta-btns">
+      <a href="analyze.html" class="btn-hero pri">⚡ Try It Now — Free</a>
+      <a href="signup.html" class="btn-hero sec">Create Account →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-logo">Resume<span>IQ</span></div>
+  <div class="footer-links">
+    <a href="home.html">Home</a>
+    <a href="analyze.html">Analyze</a>
+    <a href="analyze.html">Builder</a>
+    <a href="#about">About</a>
+    <a href="login.html">Login</a>
+    <a href="signup.html">Sign Up</a>
+  </div>
+  <div class="footer-copy">Built with ❤️ for placements · ResumeIQ 2025</div>
+</footer>
+
+<script>
+// Theme
+(function(){const t=localStorage.getItem('riq-theme');if(t)document.documentElement.dataset.theme=t;})();
+function toggleTheme(){
+  const html=document.documentElement;
+  html.dataset.theme=html.dataset.theme==='dark'?'light':'dark';
+  localStorage.setItem('riq-theme',html.dataset.theme);
+  document.getElementById('themeBtn').textContent=html.dataset.theme==='dark'?'☀️':'🌙';
+}
+(function(){
+  const t=localStorage.getItem('riq-theme');
+  document.getElementById('themeBtn').textContent=(t||'dark')==='dark'?'☀️':'🌙';
+})();
+
+// Auth-aware navbar
+(function(){
+  const token=localStorage.getItem('riq-token');
+  const user=JSON.parse(localStorage.getItem('riq-user')||'null');
+  if(token && user){
+    const loginLink=document.getElementById('navLoginLink');
+    if(loginLink){ loginLink.style.display='none'; }
+    const logoutBtn=document.getElementById('navLogoutBtn');
+    if(logoutBtn){ logoutBtn.style.display='inline-flex'; }
+    const cta=document.getElementById('navCtaBtn');
+    if(cta){ cta.textContent='Go to App →'; cta.href='analyze.html'; }
+  }
+})();
+function doLogout(){
+  localStorage.removeItem('riq-token');
+  localStorage.removeItem('riq-user');
+  window.location.href='login.html';
+}
+
+// Animate the mockup bars and score on load
+window.addEventListener('load', () => {
+  setTimeout(()=>{
+    const bars=[100,80,90,60,80];
+    bars.forEach((w,i)=>{
+      const el=document.getElementById('b'+i);
+      if(el) el.style.width=w+'%';
+    });
+    // Count up score
+    let n=0; const target=82;
+    const el=document.getElementById('animScore');
+    const t=setInterval(()=>{
+      n=Math.min(n+2,target);
+      if(el) el.textContent=n;
+      if(n>=target) clearInterval(t);
+    },18);
+  }, 600);
+});
+</script>
+</body>
+</html>
