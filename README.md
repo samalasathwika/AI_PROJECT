@@ -145,8 +145,8 @@ All responses: `{ "success": bool, "message": "...", "data": { ... } }`
 
 ## 👩‍💻 Author
 
-**Vaishnavi Pogaku** · CS Student · Warangal, Telangana 🇮🇳
+**Samala Sathwika** · CS Student · Warangal, Telangana 🇮🇳
 
-Building: ResumeIQ · City Ease Home Services
+Building: ResumeIQ 
 
 Open to Python Developer and Full Stack internships.
